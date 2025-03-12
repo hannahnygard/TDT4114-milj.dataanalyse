@@ -21,7 +21,7 @@ parametere = {
 
     "sources": by_oslo,
     "referencetime": "1980-01-01/2020-12-31",
-    "elements": "accumulated(precipitation_amount)"
+    "elements": "air_pressure"
 
 }
  
@@ -30,13 +30,15 @@ response = requests.get(URL, params=parametere, auth=HTTPBasicAuth(api_key, ""))
 
 if response.status_code == 200:
     data = response.json()
+    print('Alt OK!')
     
 else:
     print("feil:", response.status_code, response.text)
 
-
+'''
 #Filsti for JSON-filen
 filsti = os.path.join('data', 'frost_nedbor.json')
 #Oppretter JSON-fil med dataen - lukker filen automatisk 
 with open(filsti, 'w') as json_file:
     json.dump(data, json_file, indent=4)
+'''
