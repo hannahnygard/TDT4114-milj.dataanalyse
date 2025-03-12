@@ -3,13 +3,13 @@
     "@type": "ObservationResponse",
     "apiVersion": "v0",
     "license": "https://creativecommons.org/licenses/by/3.0/no/",
-    "createdAt": "2025-03-12T11:16:04Z",
-    "queryTime": 0.577,
+    "createdAt": "2025-03-12T11:44:42Z",
+    "queryTime": 0.531,
     "currentItemCount": 41,
     "itemsPerPage": 41,
     "offset": 0,
     "totalItemCount": 41,
-    "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SN18700&referencetime=1980-01-01%2F2020-02-01&elements=best_estimate_mean%28air_temperature+P1Y%29",
+    "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SN18700&referencetime=1980-01-01%2F2020-12-31&elements=best_estimate_mean%28air_temperature+P1Y%29",
     "data": [
         {
             "sourceId": "SN18700:0",
