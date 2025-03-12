@@ -39,4 +39,8 @@ else:
     print("feil:", response.status_code, response.text)
 
 
-print(data)
+#Filsti for JSON-filen
+filsti = os.path.join('data', 'frost.json')
+#Oppretter JSON-fil med dataen - closer filen automatisk 
+with open(filsti, 'w') as json_file:
+    json.dump(data, json_file, indent=4)
