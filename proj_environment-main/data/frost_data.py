@@ -4,13 +4,15 @@ from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth
 import json
 
+
 #laster opp variabler fra .env-fil
-load_dotenv() 
+dotenv_path = "api_nokkel.env"
+load_dotenv(dotenv_path=dotenv_path) 
 
 #henter ut ut variabler fra .env-fil
 api_key = os.getenv("API_KEY")
 
-URL = "https://frost.met.no/observations/v0.jsonld%22"
+URL = "https://frost.met.no/observations/v0.jsonld"
 
 by_oslo = "SN18700"
 
@@ -31,9 +33,10 @@ response = requests.get(URL, params=parametere, auth=HTTPBasicAuth(api_key, ""))
 
 if response.status_code == 200:
     data = response.json()
-    print(data)
     
+
 else:
     print("feil:", response.status_code, response.text)
 
 
+print(data)
