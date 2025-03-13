@@ -1,7 +1,6 @@
 import requests
-import os 
 from dotenv import load_dotenv
-from requests.auth import HTTPBasicAuth
+import os
 import json
 
 
@@ -16,29 +15,29 @@ URL = "https://frost.met.no/observations/v0.jsonld"
 by_oslo = "SN18700"
 
 
-# Parametere for forespørselen
-parametere = {
-
-    "sources": by_oslo,
-    "referencetime": "1980-01-01/2020-12-31",
-    "elements": "air_pressure"
-
+params = {
+    "sources": "SN18700",
+    "elements": "sum(precipitation_amount P1D)",  # Nedbør per dag
+    "referencetime": "2023-01-01/2023-12-31",  # Sett tidsperiode
 }
- 
-# Send request
-response = requests.get(URL, params=parametere, auth=HTTPBasicAuth(api_key, ""))
 
+
+respons = response = requests.get(URL, params=params, auth=(api_key, ""))
+
+
+# Sjekk respons
 if response.status_code == 200:
     data = response.json()
-    print('Alt OK!')
-    
-else:
-    print("feil:", response.status_code, response.text)
+    #print(data)  # Skriv ut eller bearbeid dataene
 
-'''
-#Filsti for JSON-filen
-filsti = os.path.join('data', 'frost_nedbor.json')
-#Oppretter JSON-fil med dataen - lukker filen automatisk 
-with open(filsti, 'w') as json_file:
-    json.dump(data, json_file, indent=4)
-'''
+
+    # Lagre data i en JSON-fil
+    #Filsti for JSON-filen
+    filsti = os.path.join('data', 'frost_nedbor.json')
+    with open(filsti, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+    print("Data lagret i frost_nedbor.json")
+
+else:
+    print("Feil:", response.status_code, response.text)
+
