@@ -7,7 +7,7 @@ import json
 dotenv_path = "api_nokkel.env"
 load_dotenv(dotenv_path=dotenv_path) 
 
-#henter ut ut variabler fra .env-fil
+#henter ut ut variabler fra .env-fil - kode hentet ut fra pensum-notebooken
 api_key = os.getenv("API_KEY")
 
 URL = "https://frost.met.no/observations/v0.jsonld"
@@ -20,17 +20,13 @@ params = {
     "referencetime": "2023-01-01/2023-12-31",  # Setter tidsperiode
 }
 
-#response = requests.request("GET", URL, params=params, data={})
 response = requests.get(URL, params=params, auth=(api_key, ""))
 
-# Sjekk respons
+# Sjekker respons
 if response.status_code == 200:
     data = response.json()
-    #print(data)  # Skriv ut eller bearbeid dataene
 
-
-    # Lagre data i en JSON-fil
-    #Filsti for JSON-filen
+    #Lagrer dataen i en JSON-fil og legger til en filsti for hvor den skal bli lagret (i datamappen, ikke i rotmappen)
     filsti = os.path.join('data', 'frost_lufttrykk.json')
     with open(filsti, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
