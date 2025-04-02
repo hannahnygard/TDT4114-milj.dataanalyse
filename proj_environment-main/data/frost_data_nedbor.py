@@ -17,8 +17,8 @@ by_oslo = "SN18700"
 
 params = {
     "sources": "SN18700",
-    "elements": "sum(precipitation_amount P1D)",  # Nedbør per dag
-    "referencetime": "2023-01-01/2023-12-31",  # Sett tidsperiode
+    "elements": "sum(precipitation_amount P1Y)",  # Nedbør per dag
+    "referencetime": "1980-01-01/2020-12-31",  # Sett tidsperiode
 }
 
 

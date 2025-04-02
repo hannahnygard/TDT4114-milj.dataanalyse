@@ -16,8 +16,8 @@ by_oslo = "SN18700"
 
 params = {
     "sources": by_oslo,
-    "elements": "air_pressure_at_sea_level",  # lufttrykk
-    "referencetime": "2023-01-01/2023-12-31",  # Setter tidsperiode
+    "elements": "mean(cloud_area_fraction P1Y)",  # lufttrykk
+    "referencetime": "1980-01-01/2020-12-31",  # Setter tidsperiode
 }
 
 response = requests.get(URL, params=params, auth=(api_key, ""))
