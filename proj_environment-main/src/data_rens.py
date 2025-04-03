@@ -16,7 +16,6 @@ class DataRens:
     
         #Definerer tomme rader først
         rader = []
-
         for obs in observationer:
             source_id = obs.get('sourceId', None)
             reference_time = obs.get('referenceTime', None)
@@ -34,31 +33,62 @@ class DataRens:
                     'performanceCategory': observation.get('performanceCategory', None)
                 })
     
+
         #Lag en Pandas DataFrame
         df = pd.DataFrame(rader)
+
         return df
     
 
+    def rens_DataFrame(self, df):
+        # Endre "referenceTime" til "year" først
+        df["year"] = pd.to_datetime(df["referenceTime"]).dt.year
 
+        # Beholder kun nødendige kolonner
+        df = df[["year", "value", "unit"]]
+
+
+        # Telle duplikater før de fjernes
+        antall_duplikater = df.duplicated().sum()
+        print(f"Antall duplikater funnet: {antall_duplikater}")
+    
+        # Hvis duplikater finnes, fjern dem
+        if antall_duplikater > 0:
+            df.drop_duplicates(inplace=True)
+
+        # Sjekk om det er noen manglende verdier
+        manglende_år = df["value"].isna().sum()
+        if manglende_år > 0:
+            print(f"Antall år med manglende verdi: {manglende_år}")
+            print("År uten verdi:")
+            print(df[df["value"].isna()])
+        else:
+            print("Det er ingen datoer som mangler verdier!")
+
+
+        return df
+
+    '''
     def rens_DataFrame(self, df):
         #Leser dataene etter dato, før vi deretter beregner gjennomsnittet
         #df_nedbor_avg = df.groupby("referenceTime", as_index=False)["value"].mean()
         #df_nedbor_avg["unit"] = df.groupby("referenceTime")["unit"].first().reset_index(drop=True)
+        
 
         #Telle duplikater før de fjernes
         def tell_duplikater():
-            antall_duplikater = df_nedbor_avg.duplicated().sum()
+            antall_duplikater = df.duplicated().sum()
             retur_av_duplikater = print(f"Antall duplikater funnet: {antall_duplikater}")
 
             #Dersom dataen har duplikater, blir de fjernet
             if antall_duplikater > 0:
-                df_nedbor_avg.drop_duplicates(inplace=True)
+                df.drop_duplicates(inplace=True)
             
             return retur_av_duplikater
 
         def finn_år_som_mangler_verdi():
             #Skjekker om det er noen år som mangler en verdi
-            manglende_år = df_nedbor_avg["value"].isna().sum()
+            manglende_år = df["value"].isna().sum()
             if manglende_år > 0:
                 print(f"Antall år med manglende verdi: {manglende_år}")
                 print("År uten verdi:")
@@ -68,12 +98,15 @@ class DataRens:
 
         #Endrer "referencetime" til "year"
         df["year"] = pd.to_datetime(df["referenceTime"]).dt.year
-      
-        return df
-    
-    
 
-    def nye_nedbør_verdier(df):
+        #Beholder kun de kolonnene jeg vil ha 
+        df = df[["year", "value", "unit"]]
+
+        return df
+    '''
+
+
+    def nye_nedbør_verdier(self, df):
         #Sum per år
         df_nedbor_avg = df.groupby("year", as_index=False)["value"].sum()
         
@@ -89,3 +122,4 @@ class DataRens:
         df_nedbor_avg["unit"] = df_nedbor_avg["unit"].dropna().unique()[0] 
 
         return df_nedbor_avg
+    
