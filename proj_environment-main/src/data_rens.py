@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import sqlite3
 import ast #bruker ast for å konvertere strenger til lister
+import os
 
 
 class DataRens:
@@ -20,8 +21,14 @@ class DataRens:
         #Går gjennom kolonne for kolonne. Dersom x er en liste eller dict blir den konvertert til en streng, er den ikke det forblir x uendret
         df = df.apply(lambda kolonne: kolonne.apply(lambda x: str(x) if isinstance(x, (dict, list)) else x))
 
+        # Finn banen til mappen som ligger ett nivå over
+        mappe = os.path.join(os.path.dirname(__file__), '..', 'data')
+
+        #Sett sti til databasen som skal opprettes i 'data' mappen
+        database = os.path.join(mappe, 'frost_Database.db')
+
         #Bruker modulen sqlite3 for å koble oss opp til databasen vår
-        kobling = sqlite3.connect("frost_Database.db")
+        kobling = sqlite3.connect(database)
 
         #Lagrer dataframen som en sql tabell
         df.to_sql("tabell", kobling, if_exists= "replace", index=False)
