@@ -43,8 +43,6 @@ class DataRens:
             """
             df = pd.read_sql_query(query, kobling)
 
-            print("Kolonner hentet fra databasen:", df.columns.tolist())  # Sjekk hva vi får
-
             # Konvertere observasjoner
             df["data.observations"] = df["data.observations"].apply(ast.literal_eval)
 
@@ -54,25 +52,8 @@ class DataRens:
             df = df[["data.referenceTime", "values", "unit"]]
             df = df.rename(columns={"data.referenceTime": "referenceTime"})
            
-            # Hent ut tidspunkt og observasjoner fra tabellen
-            #df = pd.read_sql_query("SELECT `data.referenceTime`, `data.observations` FROM tabell", kobling)
-            
-            # Konverter 'data.observations' fra streng til liste
-            #df["data.observations"] = df["data.observations"].apply(ast.literal_eval)
-            
-
-            # Behold ku, sau og lufttrykk
-            #df = df[["data.referenceTime", "values", "unit"]]
-            #df = df.rename(columns={"data.referenceTime": "year"})
-                      
-            #velger ut alle linjene i tabellen
-            #data_innhenting = "SELECT *  FROM tabell"
-
-            #gjør en sql spørring og lagrer dataen som en dataframe
-            #df = pd.read_sql_query(data_innhenting, kobling)
-
         except Exception as feil:
-            print("Noe gikk galt: {feil}")
+            print(f"Noe gikk galt: {feil}")
 
         finally:
             kobling.close()
@@ -116,15 +97,11 @@ class DataRens:
     
 
     def rens_DataFrame(self, df):
-        print("Kolonner ved start:", df.columns.tolist())
-
-        # Sjekk og endre navn på 'data.referenceTime' -> 'referenceTime'
+        # Endrer data.referenceTime til referenceTime
         if "data.referenceTime" in df.columns:
             df = df.rename(columns={"data.referenceTime": "referenceTime"})
-        elif "referenceTime" not in df.columns:
-            raise KeyError("Fant ikke 'referenceTime' i DataFrame.")
-
-        # Samme for 'values' -> 'value' hvis nødvendig
+        
+        # Values endres til value
         if "values" in df.columns:
             df = df.rename(columns={"values": "value"})
 
