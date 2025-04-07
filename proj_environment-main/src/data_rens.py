@@ -44,13 +44,7 @@ class DataRens:
         df["year"] = pd.to_datetime(df["referenceTime"]).dt.year
 
         # Beholder kun nødendige kolonner
-        df = df[["year", "value", "unit"]]
-
-        # Fjern verdi for et tilfeldig år
-        #df = self.fjern_verdi_for_tilfeldig_aar(df)  #TEST
-
-        # Legg til duplikat for et tilfeldig år
-        #df = self.legg_til_duplikater_for_tilfeldig_aar(df)  #TEST
+        df = df[["year", "value", "unit"]].copy()
 
         # Telle duplikater før de fjernes
         antall_duplikater = df.duplicated(subset=["year"]).sum()
@@ -60,14 +54,21 @@ class DataRens:
     
         # Hvis duplikater finnes, fjern dem
         if antall_duplikater > 0:
-            df.drop_duplicates(inplace=True)
+            df = df.drop_duplicates()
+            print("Duplikater er fjernet - antall rader: ", len(df))
 
         # Sjekk om det er noen manglende verdier
         manglende_år = df["value"].isna().sum()
         if manglende_år > 0:
             print(f"Antall år med manglende verdi: {manglende_år}")
-            print("Uten verdi:")
-            print(df[df["value"].isna()])
+            print("Rader uten verdi:")
+            print(df[df["value"].isna()].to_string(index=False))  # Vist på en mer ryddig måte
+
+            # Erstatter manglende verdier med gjennomsnttet fra alle årene
+            gjennomsnitt = df["value"].mean().round(2)  
+            df["value"] = df["value"].fillna(gjennomsnitt)  
+            print("Manglende verdier er erstattet med gjennomsnittet: ", gjennomsnitt)
+
         else:
             print("Det er ingen datoer som mangler verdier!")
 
