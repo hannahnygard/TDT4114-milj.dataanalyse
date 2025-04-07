@@ -21,11 +21,11 @@ class DataRens:
         #Går gjennom kolonne for kolonne. Dersom x er en liste eller dict blir den konvertert til en streng, er den ikke det forblir x uendret
         df = df.apply(lambda kolonne: kolonne.apply(lambda x: str(x) if isinstance(x, (dict, list)) else x))
 
-        # Finn banen til mappen som ligger ett nivå over
-        mappe = os.path.join(os.path.dirname(__file__), '..', 'data')
+        #Viser til hvor databasen skal bli opprettet
+        data_mappe = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
-        #Sett sti til databasen som skal opprettes i 'data' mappen
-        database = os.path.join(mappe, 'frost_Database.db')
+        #Lager en filsti til hvor databsen skal opprettes
+        database = os.path.join(data_mappe, 'frost_Database.db')
 
         #Bruker modulen sqlite3 for å koble oss opp til databasen vår
         kobling = sqlite3.connect(database)
@@ -36,12 +36,21 @@ class DataRens:
         kobling.close()
 
         print("Suksess! JSON er nå omgjort til en database")
+
         return df
+    
     
     
     def fra_database_til_dataframe(self):
         try:
-            kobling = sqlite3.connect("frost_Database.db")
+            #Viser til hvor databasen skal bli opprettet
+            data_mappe = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+
+            #Lager en filsti til hvor databsen skal opprettes
+            database = os.path.join(data_mappe, 'frost_Database.db')
+
+            kobling = sqlite3.connect(database)
+
 
             # Hent ut alle kolonner, inkludert 'data.referenceTime'
             query = """
