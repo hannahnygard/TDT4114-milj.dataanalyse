@@ -36,6 +36,7 @@ class DataRens:
         kobling.close()
 
         print("Suksess! JSON er nå omgjort til en database")
+        print()
 
         return df
     
