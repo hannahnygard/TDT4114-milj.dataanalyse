@@ -163,8 +163,11 @@ class DataRens:
         # Legg til kolonnen 'avg_per_day'
         df["avg_per_day"] = (df["value"] / df["days"]).round(2)
 
+        df = df.rename(columns={"value" : "total_values", "avg_per_day" : "value"})
+
+
         #Endrer til den rekkefølgen vi vil ha
-        df = df[["year", "value", "avg_per_day", "unit", "days"]]
+        df = df[["year", "total_values", "value", "unit", "days"]]
 
         return df
 
