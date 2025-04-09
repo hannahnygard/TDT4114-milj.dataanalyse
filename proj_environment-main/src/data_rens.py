@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import sqlite3
-import ast #bruker ast for å konvertere strenger til lister
+import ast
 import os
 
 
@@ -36,6 +36,7 @@ class DataRens:
         kobling.close()
 
         print("Suksess! JSON er nå omgjort til en database")
+        print()
 
         return df
     
@@ -104,7 +105,6 @@ class DataRens:
                     'timeOffset': observation.get('timeOffset', None),
                     'performanceCategory': observation.get('performanceCategory', None)
                 })
-    
 
         #Lag en Pandas DataFrame
         df = pd.DataFrame(rader)
@@ -126,34 +126,45 @@ class DataRens:
         df["year"] = pd.to_datetime(df["referenceTime"]).dt.year
 
         # Beholder kun nødendige kolonner
-        df = df[["year", "value", "unit"]]
-
+        df = df[["year", "value", "unit"]].copy()
 
         # Telle duplikater før de fjernes
-        antall_duplikater = df.duplicated().sum()
+        antall_duplikater = df.duplicated(subset=["year"]).sum()
         print(f"Antall duplikater funnet: {antall_duplikater}")
+
+
     
         # Hvis duplikater finnes, fjern dem
         if antall_duplikater > 0:
-            df.drop_duplicates(inplace=True)
+            df = df.drop_duplicates()
+            print("Duplikater er fjernet - antall rader: ", len(df))
 
         # Sjekk om det er noen manglende verdier
         manglende_år = df["value"].isna().sum()
         if manglende_år > 0:
             print(f"Antall år med manglende verdi: {manglende_år}")
-            print("År uten verdi:")
-            print(df[df["value"].isna()])
+            print("Rader uten verdi:")
+            print(df[df["value"].isna()].to_string(index=False))  # Vist på en mer ryddig måte
+
+            # Erstatter manglende verdier med gjennomsnttet fra alle årene
+            gjennomsnitt = df["value"].mean().round(2)  
+            df["value"] = df["value"].fillna(gjennomsnitt)  
+            print("Manglende verdier er erstattet med gjennomsnittet: ", gjennomsnitt)
+
         else:
             print("Det er ingen datoer som mangler verdier!")
 
 
         return df
 
+
+
+
     def nye_nedbør_verdier(self, df):
-        #Lager en kopi av dataframen for å unngå feilmeldingen SettingsWithCopyWarning 
+        # Lager en kopi av dataframen for å unngå feilmeldingen SettingsWithCopyWarning 
         df = df.copy()
 
-        #Funksjon for å sjekke om det er skuddår
+        # Funksjon for å sjekke om det er skuddår
         def er_skuddår(år):
             return (år % 4 == 0 and år % 100 != 0) or (år % 400 == 0)
 
@@ -161,17 +172,16 @@ class DataRens:
         df["days"] = df["year"].apply(lambda x: 366 if er_skuddår(x) else 365)
 
         # Legg til kolonnen 'avg_per_day'
-        df["avg_per_day"] = (df["value"] / df["days"]).round(2)
-
-        df = df.rename(columns={"value" : "total_values", "avg_per_day" : "value"})
-
+        df["avg_per_day"] = df.apply(
+                lambda row: round(row["value"] / row["days"], 2) if pd.notna(row["value"]) else None,
+                axis=1
+            )
 
         #Endrer til den rekkefølgen vi vil ha
         df = df[["year", "total_values", "value", "unit", "days"]]
 
         return df
-
-
+    
 
 
 
