@@ -112,6 +112,31 @@ class DataRens:
         return df
     
 
+
+    def nye_nedbør_verdier(self, df):
+        # Lager en kopi av dataframen for å unngå feilmeldingen SettingsWithCopyWarning 
+        df = df.copy()
+        
+        # Funksjon for å sjekke om det er skuddår
+        def er_skuddår(år):
+            return (år % 4 == 0 and år % 100 != 0) or (år % 400 == 0)
+        
+        # Legg til kolonnen 'days'
+        df["days"] = df["year"].apply(lambda x: 366 if er_skuddår(x) else 365)
+        
+        # Legg til kolonnen 'avg_per_day'
+        df["avg_per_day"] = df.apply(
+                lambda row: round(row["value"] / row["days"], 2) if pd.notna(row["value"]) else None,
+                axis=1)
+        
+        df.rename(columns = {"value" : "total_values", "avg_per_day" : "value"}, inplace = True)
+        
+        #Endrer til den rekkefølgen vi vil ha
+        df = df[["year", "total_values", "value", "unit", "days"]]
+        return df
+
+
+
     def rens_DataFrame(self, df):
         # Endrer data.referenceTime til referenceTime
         if "data.referenceTime" in df.columns:
@@ -158,29 +183,6 @@ class DataRens:
         return df
 
 
-
-
-    def nye_nedbør_verdier(self, df):
-        # Lager en kopi av dataframen for å unngå feilmeldingen SettingsWithCopyWarning 
-        df = df.copy()
-
-        # Funksjon for å sjekke om det er skuddår
-        def er_skuddår(år):
-            return (år % 4 == 0 and år % 100 != 0) or (år % 400 == 0)
-
-        # Legg til kolonnen 'days'
-        df["days"] = df["year"].apply(lambda x: 366 if er_skuddår(x) else 365)
-
-        # Legg til kolonnen 'avg_per_day'
-        df["avg_per_day"] = df.apply(
-                lambda row: round(row["value"] / row["days"], 2) if pd.notna(row["value"]) else None,
-                axis=1
-            )
-
-        # Endrer til den rekkefølgen vi vil ha
-        df = df[["year", "value", "avg_per_day", "unit", "days"]]
-
-        return df
     
 
 
