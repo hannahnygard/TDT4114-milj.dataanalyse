@@ -11,10 +11,10 @@ class Statistiske_maal():
 
             for start_år,slutt_år in tids_intervaller:
                 gjennomsnitt = df[(df["year"] >= start_år) & (df["year"] <= slutt_år)]["value"].mean()
-                data[f"{start_år}-{slutt_år}"] = round(float(gjennomsnitt), 2)
+                data[f"{start_år}-{slutt_år}"] = round(gjennomsnitt, 2)
 
             gjennomsnitt_1980_2020 = df[(df["year"] >= 1980) & (df["year"] <= 2020)]["value"].mean()
-            data[f"Totalt"] = round(float(gjennomsnitt_1980_2020),2)
+            data[f"Totalt"] = round(gjennomsnitt_1980_2020,2)
 
 
             return data
@@ -25,11 +25,11 @@ class Statistiske_maal():
         data = {}
 
         for start_år,slutt_år in tids_intervaller:
-            median = df[(df["year"] >= start_år) & (df["year"] <= slutt_år)]["value"].median().round(2).item()
-            data[f"{start_år}-{slutt_år}"] = round(float(median), 2)
+            median = df[(df["year"] >= start_år) & (df["year"] <= slutt_år)]["value"].median()
+            data[f"{start_år}-{slutt_år}"] = round(median, 2)
 
-        median_1980_2020 = df[(df["year"] >= 1980) & (df["year"] <= 2020)]["value"].median().round(2).item()
-        data[f"Totalt"] = round(float(median_1980_2020), 2)
+        median_1980_2020 = df[(df["year"] >= 1980) & (df["year"] <= 2020)]["value"].median()
+        data[f"Totalt"] = round(median_1980_2020, 2)
 
         return data
     
@@ -39,11 +39,11 @@ class Statistiske_maal():
         data = {}
 
         for start_år,slutt_år in tids_intervaller:
-            std_avvik = df[(df["year"] >= start_år) & (df["year"] <= slutt_år)]["value"].std().round(2).item()
-            data[f"{start_år}-{slutt_år}"] = float(std_avvik)
+            std_avvik = df[(df["year"] >= start_år) & (df["year"] <= slutt_år)]["value"].std()
+            data[f"{start_år}-{slutt_år}"] = round(std_avvik,2)
 
-        std_avvik_1980_2020 = df[(df["year"] >= 1980) & (df["year"] <= 2020)]["value"].std().round(2).item()
-        data["Totalt"] = float(std_avvik_1980_2020)
+        std_avvik_1980_2020 = df[(df["year"] >= 1980) & (df["year"] <= 2020)]["value"].std()
+        data["Totalt"] = round(std_avvik_1980_2020,2)
 
         return data
 
