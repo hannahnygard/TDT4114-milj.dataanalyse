@@ -10,7 +10,7 @@ from data_rens import DataRens
 class Test_DataRens(unittest.TestCase):
     def setUp(self):
         self.rens = DataRens()
-        self.test_fil = os.path.join(os.path.dirname(__file__), 'testdata.json')
+        self.test_fil = os.path.join(os.path.dirname(__file__), 'testfil.json')
 
         # Korrekt struktur for JSON-fil (data skal være en ordbok med en liste under "data")
         test_json = {
@@ -109,6 +109,11 @@ class Test_DataRens(unittest.TestCase):
         #Sjekker at den henter riktig verdi
         self.assertEqual(renset_df.iloc[0]["value"], 100)       #Rad 1 fra testfilen
 
+
+
+    def tearDown(self):
+        if os.path.exists(self.test_fil):   #fjerner dataen vi laget i testen og kjører etter hver test
+            os.remove(self.test_fil)
 
 
 
