@@ -1,5 +1,3 @@
-# src/trend_model.py
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
@@ -24,7 +22,7 @@ class TrendModel:
     def plot_models(self):
         X_sorted = np.sort(self.x)
         plt.figure(figsize=(10,6))
-        plt.scatter(self.x, self.y, s=10, label="Faktiske data")
+        plt.scatter(self.x, self.y, s=10, color='black', label="Faktiske data")
         colors = ['red', 'green', 'blue']
         for i, deg in enumerate(sorted(self.models.keys())):
             y_pred = self.models[deg](X_sorted)
@@ -57,8 +55,8 @@ class TrendModel:
         test_X = np.linspace(self.x.min(), future_year, 100)
         y_pred = self.predict(test_X, deg=deg)
         plt.figure(figsize=(10,6))
-        plt.scatter(self.x, self.y, label='Faktiske data', s=10)
-        plt.plot(test_X, y_pred, color='purple', label=f'Prediksjon ({deg}. grads modell)')
+        plt.scatter(self.x, self.y, color='black', label='Faktiske data', s=10)
+        plt.plot(test_X, y_pred, color='green', label=f'Prediksjon ({deg}. grads modell)')
         plt.xlabel("År")
         plt.ylabel("Verdi")
         plt.title(f"Prediksjon fram til {future_year}")
