@@ -8,11 +8,27 @@ from data_rens import DataRens
 
 
 class Test_DataRens(unittest.TestCase):
+
     def setUp(self):
+        """
+        Setter opp testmiljøet før hver test i testklassen kjøres.
+
+        Oppretter en instans av "DataRens", som inneholder metoder som skal testes.
+        Det lages en "testfil.json" med en korrekt struktur som 
+        etterligner et typisk datasett fra API-et eller databasen.
+        JSON-filen inneholder en post med to observasjoner, begge knyttet til nedbør.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Denne metoden kjøres automatisk før hver enkelt testmetode, slik at 
+        testene har tilgang til en gyldig og konsistent testfil.
+        """
         self.rens = DataRens()
         self.test_fil = os.path.join(os.path.dirname(__file__), 'testfil.json')
 
-        # Korrekt struktur for JSON-fil (data skal være en ordbok med en liste under "data")
+        # Lager en JSON-struktur med gyldig format slik at testene kan simulere ekte responsdata
         test_json = {
             "data": [
                 {
@@ -44,80 +60,150 @@ class Test_DataRens(unittest.TestCase):
 
 
 
-
-####################
-#TESTING AV METODER SOM GÅR PÅ JSON-FILER
-
     def test_fra_json_til_dataframe(self):
-        # Vi bruker filen som er laget i setUp
+        """
+        Tester funksjonen "fra_json_til_dataframe" i DataRens klassen.
+        Testen bruker en forhåndsdefinert testfil som er opprettet i "setUp" med kjent struktur og innhold.
+
+        Testen sjekker følgende:
+        - At funksjonen returnerer et objekt av typen "pandas.DataFrame".
+        - At antall rader i DataFrame-en er korrekt.
+        - At verdien på første rad samsvarer med testdataen.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Målet er å verifisere at JSON-filen leses riktig og at DataFrame-en 
+        konstrueres korrekt fra observasjonene i filen.
+        """
+        
+        # Bruker filen som ble opprettet i setUp for å sikre at testen har kjent og kontrollert input
         testfil_sti = self.test_fil  
 
-        #Kaller på funksjonen vi skal teste og leser fra testfilen
+        # Leser innholdet fra testfilen gjennom funksjonen som skal testes for å undersøke om den håndterer input korrekt
         df = self.rens.fra_json_til_dataframe(testfil_sti)
 
-        #Sjekker at vi faktisk får tilbake en DataFrame
+        # Sikrer at resultatet er en DataFrame for å bekrefte at funksjonen returnerer forventet datatype
         self.assertIsInstance(df, pd.DataFrame)  
 
-        #Sjekker at vi har riktig antall rader i tabellen
-        self.assertEqual(len(df), 2)  
+        # Verifiserer at antall rader i resultatet samsvarer med antallet observasjoner som ble lagt inn, for å teste korrekt lesing
+        self.assertEqual(len(df), 2)
     
-        #Sjekker at verdien på første rad er det vi satt inn
+        # Kontrollerer at verdien i første rad samsvarer med testdataen for å forsikre oss om at dataen hentes korrekt ut
         self.assertEqual(df.iloc[0]["value"], 100)
 
 
 
     def test_nye_nedbor_verdier(self):
-        # Lager en dataframe med year, value og unit
+        """
+        Tester funksjonen "nye_nedbør_verdier" i DataRens klassen.
+
+        Testen bruker en enkel DataFrame med to år:
+        - Ett skuddår (2020) med totalverdi lik 366 mm.
+        - Ett vanlig år (2021) med totalverdi lik 365 mm.
+
+        Følgende verifiseres:
+        - At kolonnen "days" blir korrekt kalkulert. Som vil si 366 for skuddår og 365 for vanlig år.
+        - At kolonnen "value" som representerer gjennomsnitt per dag er riktig kalkulert til 1.0 for begge rader.
+        - At kolonnen "total_values" eksisterer i resultatet.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Målet er å bekrefte korrekt beregning av nedbør per dag og riktig håndtering av skuddår.
+        """
+        
+        # Oppretter en DataFrame med både skuddår og vanlig år for å teste hvordan funksjonen håndterer variasjoner i antall dager per år
         df = pd.DataFrame([
-            {"year": 2020, "value": 366, "unit": "mm"},  #Er skuddår
-            {"year": 2021, "value": 365, "unit": "mm"}   #Er vanlig år
+            {"year": 2020, "value": 366, "unit": "mm"},  #Viser skuddår som vil hjelpe videre i koden
+            {"year": 2021, "value": 365, "unit": "mm"}   #Viser vanlig år som vil hjelpe oss videre i koden
         ])
         resultat = self.rens.nye_nedbør_verdier(df)
 
-        #Sjekker at antall dager er riktig for skuddår
+        # Bekrefter at funksjonen beregner korrekt antall dager for et skuddår, for å sikre at årstypen blir tatt hensyn til
         self.assertEqual(resultat.loc[0, "days"], 366)
         
-        #Sjekker at verdien for skuddår er riktig 
+        # Validerer at nedbør per dag er korrekt for skuddåret, for å teste at verdi divisjonen gjøres riktig
         self.assertEqual(resultat.loc[0, "value"], 1.0)
         
-        #Sjekker at verdien for et vanlig år er riktig 
+        # Sikrer at beregningen også er riktig for et vanlig år, for å bekrefte konsistens i logikken
         self.assertEqual(resultat.loc[1, "value"], 1.0)
         
-        #Sjekker at kolonnen "total_values" finnes i resultatet
+        # Undersøker at kolonnen som skal vise total nedbør fortsatt finnes i resultatet, for å kontrollere at ingen data går tapt i prosessen
         self.assertIn("total_values", resultat.columns)
 
 
-    def test_rens_dataframe(self):
-        #Bruker testdata.json fra setUp-metoden
-        testfil_sti = self.test_fil  # Filen som ble opprettet i setUp
 
-        #kaller på metoden vi tester
+    def test_rens_dataframe(self):
+        """
+        Tester funksjonen "rens_DataFrame" i DataRens klassen.
+        
+        Funksjonen leser inn testdata fra JSON-fil opprettet i "setUp". Før den
+        konverterer JSON til DataFrame med "fra_json_til_dataframe", og renser 
+        DataFrame med "rens_DataFrame".
+
+        Testen verifiserer at:
+        - Den returnerte verdien er en "pd.DataFrame".
+        - DataFramen har forventet antall rader.
+        - Kolonnen "value" finnes etter rensing.
+        - Verdien i første rad er korrekt.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Formål:
+        Sikre at renselogikken fungerer som forventet ved å teste kolonneendringer,
+        filtrering og bevaring av riktige verdier.
+        """
+
+        # Henter inn testfilen som ble opprettet i setUp for å sikre konsistent og kontrollert testgrunnlag
+        testfil_sti = self.test_fil 
+
+        # Kaller på funksjonen som konverterer JSON til DataFrame for å kunne utføre videre rensing og analyser
         df = self.rens.fra_json_til_dataframe(testfil_sti)
 
-        #Kaller på rens_DataFrame-metoden
+        # Utfører rensing av DataFrame for å fjerne unødvendige eller uønskede data før videre analyse
         renset_df = self.rens.rens_DataFrame(df)
 
-        #Sjekker om resultatet er en DataFrame
+        # Bekrefter at det rensede resultatet fortsatt er en gyldig DataFrame, for å sikre dataintegritet
         self.assertIsInstance(renset_df, pd.DataFrame)
 
-        #Sjekker at vi får riktig antallet rader etter rensingen
-        self.assertEqual(len(renset_df), 2)  # Skal være 2 rader i dette eksempelet
+        # Validerer at det korrekte antallet rader er bevart etter rensing, noe som indikerer at relevante data ikke har blitt fjernet
+        self.assertEqual(len(renset_df), 2)
 
-        #sjekker kolonnenavnene 
+        # Kontrollerer at kolonnen "value" finnes, som en bekreftelse på at ønsket struktur i datasettet er beholdt
         self.assertIn("value", renset_df.columns)
 
-        #Sjekker at den henter riktig verdi
-        self.assertEqual(renset_df.iloc[0]["value"], 100)       #Rad 1 fra testfilen
+        # Sikrer at verdien fra første observasjon er korrekt, for å teste at dataene er hentet og behandlet som forventet
+        self.assertEqual(renset_df.iloc[0]["value"], 100)
 
 
 
     def tearDown(self):
-        if os.path.exists(self.test_fil):   #fjerner dataen vi laget i testen og kjører etter hver test
+        """
+        Oppryddingsmetode som kjøres etter hver test.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Formål:
+        Fjerner testfilen "self.test_fil" som ble opprettet i "setUp",
+        slik at hver test kjøres med et rent utgangspunkt og unngår
+        konflikt med eksisterende filer eller etterlatenskaper fra tidligere tester.
+
+        Sikkerhet:
+        Sjekker om filen eksisterer før den forsøkes slettet.
+        """
+
+        # Fjerner testfilen etter hver test for å unngå at gammel testdata påvirker resultatene i fremtidige tester
+        if os.path.exists(self.test_fil):
             os.remove(self.test_fil)
 
 
 
-##########################################
-#KJØRING AV TESTENE
 if __name__ == "__main__":
     unittest.main()
