@@ -3,6 +3,7 @@ import pandas as pd
 import sqlite3
 import ast
 import os
+import matplotlib.pyplot as plt
 
 
 class DataRens:
@@ -137,7 +138,7 @@ class DataRens:
 
 
 
-    def rens_DataFrame(self, df):
+    def rens_DataFrame(self, df, vis_manglende=False):
         # Endrer data.referenceTime til referenceTime
         if "data.referenceTime" in df.columns:
             df = df.rename(columns={"data.referenceTime": "referenceTime"})
@@ -168,6 +169,7 @@ class DataRens:
         manglende_år = df["value"].isna().sum()
         if manglende_år > 0:
             print(f"Antall år med manglende verdi: {manglende_år}")
+            df_uten_fylling = df.copy()  
             print("Rader uten verdi:")
             print(df[df["value"].isna()].to_string(index=False))  # Vist på en mer ryddig måte
 
@@ -176,11 +178,26 @@ class DataRens:
             df["value"] = df["value"].fillna(gjennomsnitt)  
             print("Manglende verdier er erstattet med gjennomsnittet: ", gjennomsnitt)
 
+            if vis_manglende:
+                self.plot_manglende_data(df_uten_fylling, df)
+
         else:
             print("Det er ingen datoer som mangler verdier!")
 
 
         return df
+    
+    def plot_manglende_data(self, df_med_hull, df_utfylt):
+        plt.figure(figsize=(10, 6))
+        plt.plot(df_med_hull["year"], df_med_hull["value"], 'o-', label="Med manglende verdier")
+        plt.plot(df_utfylt["year"], df_utfylt["value"], 'o--', label="Etter utfylling")
+        plt.xlabel("År")
+        plt.ylabel("Verdi")
+        plt.title("Effekt av manglende verdier på trend")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
 
 
     
