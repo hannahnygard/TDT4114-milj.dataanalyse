@@ -7,12 +7,11 @@ import json
 dotenv_path = "api_nokkel.env"
 load_dotenv(dotenv_path=dotenv_path) 
 
-# Henter API-nøkkelen slik at vi kan sende forespørsler til Frost
+# Henter API-nøkkelen slik at vi kan godkjenne forespørselen
 api_key = os.getenv("API_KEY")
 
 # Endepunkt for observasjonsdata fra Frost
 URL = "https://frost.met.no/observations/v0.jsonld"
-
 by_oslo = "SN18700"
 
 # Setter parametere for å hente årsmiddel av skydekke for Oslo, 1980–2020
@@ -22,7 +21,7 @@ params = {
     "referencetime": "1980-01-01/2020-12-31",  # Setter tidsperiode
 }
 
-# Henter data fra Frost ved å sende en GET-forespørsel med autentisering
+# Sender forespørselen med autentisering for å få tilgang til data
 response = requests.get(URL, params=params, auth=(api_key, ""))
 
 # Sjekker om forespørselen gikk gjennom før vi lagrer noe
