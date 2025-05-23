@@ -17,6 +17,10 @@ class TestDataManipulering(unittest.TestCase):
 
         Oppretter en test-DataFrame med årene 1980-2020 og tilhørende verdier fra 0 til 40. 
         Lager også en instans av klassen DataManipulering som skal testes.
+        
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
 
         Denne metoden kjøres automatisk før hver testmetode i klassen.
         """
