@@ -25,7 +25,12 @@ class Test_DataRens(unittest.TestCase):
         database_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'frost_Database.db'))
         self.assertTrue(os.path.exists(database_path))
         
-
+    def test_database_opprettelse_ugyldig_filbane(self): 
+        # Tester at 'database_opprettelse' kaster FileNotFoundError når en ugyldig filbane oppgis,
+        # for å sikre at riktig feilhåndtering ved manglende eller feilplasserte datafiler
+        ugyldig_fil = os.path.join(os.path.dirname(__file__), 'ikke_eksisterende_fil.json')
+        with self.assertRaises(FileNotFoundError):
+            self.rens.database_opprettelse(ugyldig_fil)
 
 
     def test_return_dataframe(self): #tester om det lagres en dataframe i databasen
