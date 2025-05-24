@@ -4,11 +4,36 @@ import sqlite3
 import ast
 import os
 import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 
 
 class DataRens:
     def __init__(self):
-        pass
+        # Widgetene oprettes som attributter (og brukes senere)
+        self.vis_manglende_checkbox = widgets.Checkbox(value=False, description='Vis manglende verdier')
+        self.kjør_knapp = widgets.Button(description="Rens data og plott")
+        self.output = widgets.Output()
+        # Koble knapp til intern metode
+        self.kjør_knapp.on_click(self._on_kjør_knapp_click)
+        self._df_urenset = None
+        self._df_opprinnelig = None
+
+    def sett_data(self, df):
+        """Sett dataen som skal renses."""
+        self._df_opprinnelig = df
+        self._df_urenset = df.copy()
+
+    def _on_kjør_knapp_click(self, b):
+        with self.output:
+            self.output.clear_output()
+            df_renset = self.rens_DataFrame(self._df_opprinnelig, vis_manglende=self.vis_manglende_checkbox.value)
+            self.plot_manglende_data(self._df_urenset, df_renset)
+
+    def vis_widget(self):
+        """Vis widgetene i notebooken."""
+        display(self.vis_manglende_checkbox, self.kjør_knapp, self.output)
+        
 
     def database_opprettelse(self, filnavn ="frost_skydekke.json"):
         #noe kode inspirert av w3-schools, men ikke direkte kopiert
