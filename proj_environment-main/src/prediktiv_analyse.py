@@ -7,26 +7,29 @@ class TrendModel:
         self.df = df
         self.x = df[x_col].values
         self.y = df[y_col].values
-        self.models = {}
+        self.modeller = {}
 
-    def create_model(self, deg):
-        coeffs = np.polyfit(self.x, self.y, deg=deg)
-        model = np.poly1d(coeffs)
-        self.models[deg] = model
-        return model
+    def opprett_modell(self, grad):
+        #oppretter en polynommodeller
+        koeffisienter = np.polyfit(self.x, self.y, deg=grad)
+        modell = np.poly1d(koeffisienter)
+        self.modeller[grad] = modell
+        return modell
 
-    def fit_models(self, degrees=[1, 2, 3]):
-        for deg in degrees:
-            self.create_model(deg)
+    def tilpass_modeller(self, grader=[1, 2, 3]):
+        #oppretter en modell for hver grad
+        for grad in grader:
+            self.opprett_modell(grad)
 
-    def plot_models(self):
+    def plot_modeller(self):
+        #plotter alle lagrede modeller sammen med datapunktene fra dataen
         X_sorted = np.sort(self.x)
         plt.figure(figsize=(10,6))
         plt.scatter(self.x, self.y, s=10, color='black', label="Faktiske data")
         colors = ['red', 'green', 'blue']
-        for i, deg in enumerate(sorted(self.models.keys())):
-            y_pred = self.models[deg](X_sorted)
-            plt.plot(X_sorted, y_pred, color=colors[i], label=f'{deg}. grads modell')
+        for i, grad in enumerate(sorted(self.modeller.keys())):
+            y_pred = self.modeller[grad](X_sorted)
+            plt.plot(X_sorted, y_pred, color=colors[i], label=f'{grad}. grads modell')
         plt.xlabel("År")
         plt.ylabel("Verdi")
         plt.title("Polynomregresjon")
@@ -35,31 +38,36 @@ class TrendModel:
         plt.show()
 
     def r2_scores(self):
+        #regner ut r2-scoren for hver modell,
+        #for å finne ut av hvilken grad som passer best 
         scores = {}
-        for deg, model in self.models.items():
-            scores[deg] = r2_score(self.y, model(self.x))
+        for grad, modell in self.modeller.items():
+            scores[grad] = r2_score(self.y, modell(self.x))
         return scores
     
     def print_r2_scores(self):
+        #skriver ut r2-scoren for alle modeller
         print("R²-scorer for modellene:")
-        for deg, score in self.r2_scores().items():
-            print(f"  {deg}. grads modell: {score:.4f}")
+        for grad, score in self.r2_scores().items():
+            print(f"  {grad}. grads modell: {score:.4f}")
 
 
-    def predict(self, year, deg=1):
-        if deg not in self.models:
-            self.create_model(deg)
-        return self.models[deg](year)
+    def prediktere(self, år, grad=1):
+        #lager en prediksjon for gitt år basert på modell av ønsket grad
+        if grad not in self.modeller:
+            self.opprett_modell(grad)
+        return self.modeller[grad](år)
 
-    def plot_prediction(self, future_year, deg=1):
-        test_X = np.linspace(self.x.min(), future_year, 100)
-        y_pred = self.predict(test_X, deg=deg)
+    def plot_prediksjon(self, framtidig_år, grad=1):
+        #plotter en prediksjon av framtidige verdier frem til et bestemt år
+        test_X = np.linspace(self.x.min(), framtidig_år, 100)
+        y_pred = self.prediktere(test_X, grad=grad)
         plt.figure(figsize=(10,6))
         plt.scatter(self.x, self.y, color='black', label='Faktiske data', s=10)
-        plt.plot(test_X, y_pred, color='green', label=f'Prediksjon ({deg}. grads modell)')
+        plt.plot(test_X, y_pred, color='green', label=f'Prediksjon ({grad}. grads modell)')
         plt.xlabel("År")
         plt.ylabel("Verdi")
-        plt.title(f"Prediksjon fram til {future_year}")
+        plt.title(f"Prediksjon fram til {framtidig_år}")
         plt.legend()
         plt.grid(True)
         plt.show()
