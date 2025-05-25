@@ -25,12 +25,9 @@ class DataRens:
         Navn på JSON-filen som skal leses. Standardverdi er "frost_skydekke.json".
 
         Returnerer:
-        En pandas DataFrame med dataen fra JSON-filen, klargjort og lagret i databasen.
-
-        Sideeffekter:
-        Oppretter en SQLite-databasefil kalt "frost_Database.db".
-        Lager en ny tabell med navn "tabell" i databasen.
-        Skriver ut bekreftelse til konsollen når operasjonen er vellykket.
+        En pandas DataFrame med dataen fra JSON-filen, klargjort og lagret i databasen. Det blir da
+        opprettet en SQLite-databasefil kalt "frost_Database.db", og det kommer en 
+        ny tabell med navn "tabell" i databasen. Funksjonen skriver ut bekreftelse til konsollen når operasjonen er vellykket.
         """
 
         #Noe kode inspirert av w3-schools, men ikke direkte kopiert
@@ -80,11 +77,9 @@ class DataRens:
         Instansen av klassen denne metoden tilhører.
 
         Returnerer:
-        En DataFrame med kolonnene "referenceTime", "values" og "unit".
-
-        Sideeffekter:
-        Skriver ut en feilmelding til konsollen dersom noe går galt ved henting eller behandling av data.
-        Lukker databasen etter utført operasjon, uansett om det oppstår feil eller ikke.
+        En DataFrame med kolonnene "referenceTime", "values" og "unit". Dersom noe går galt ved henting 
+        eller behandling av data, skrives det ut en feilmelding til konsollen. Etter en utført operasjon
+        lukkes databasen uasett om det oppstår feil eller ikke.
         """
         try:
             # Bruker absolutt sti slik at databasen alltid havner riktig uansett hvor scriptet kjøres fra
@@ -199,9 +194,7 @@ class DataRens:
 
         Returnerer:
         En oppdatert DataFrame med kolonnene "year", "total_values", "value" som å er gjennomsnitt per dag, "unit" og "days".
-
-        Sideeffekter:
-        Ingen permanente endringer i original-DataFrame, da funksjonen opererer på en kopi.
+        Der det ikke er noen permanente endringer i original-DataFrame, da funksjonen opererer på en kopi.
         """
 
         # Lager en kopi av dataframen for å unngå feilmeldingen SettingsWithCopyWarning 
@@ -244,12 +237,9 @@ class DataRens:
 
         Returnerer:
         En renset og standardisert DataFrame med kolonnene "year", "value" og "unit". 
-        Der duplikater og manglende verdier er håndtert.
-
-        Sideeffekter:
-        Skriver ut antall duplikater og manglende verdier til konsollen.
-        Viser rader med manglende verdier før de blir erstattet.
-        Erstatter manglende verdier i "value" med gjennomsnittet for kolonnen.
+        Der duplikater og manglende verdier er håndtert, og antallet av hver type er skrevet ut til konsollen. 
+        Rader med manglende verdier vises før de blir erstattet. Deretter erstattes de manglende 
+        verdiene i kolonnen "value" med gjennomsnittet av kolonnen.
         """
 
         # Endrer data.referenceTime til referenceTime slik at det gir mer forståelse 
