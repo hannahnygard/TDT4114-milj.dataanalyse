@@ -188,14 +188,14 @@ class DataRens:
 
         Funksjonen legger til en kolonne med antall dager per år, tar hensyn til skuddår,
         og beregner gjennomsnittlig verdi per dag. Den totalnedbøren som tidligere lå i
-        'value'-kolonnen flyttes til 'total_values', mens 'value' nå representerer 
+        "value" kolonnen flyttes til "total_values", mens "value" nå representerer 
         gjennomsnittet per dag. Rekkefølgen på kolonnene tilpasses til ønsket struktur.
 
         Parametere:
         self (objekt): 
         Instansen av klassen denne metoden tilhører.
         df (pandas.DataFrame): 
-        En DataFrame som må inneholde kolonnene 'year', 'value' og 'unit'.
+        En DataFrame som må inneholde kolonnene "year", "value" og "unit".
 
         Returnerer:
         En oppdatert DataFrame med kolonnene "year", "total_values", "value" som å er gjennomsnitt per dag, "unit" og "days".
@@ -244,7 +244,7 @@ class DataRens:
 
         Returnerer:
         En renset og standardisert DataFrame med kolonnene "year", "value" og "unit". 
-        Duplikater og manglende verdier er håndtert.
+        Der duplikater og manglende verdier er håndtert.
 
         Sideeffekter:
         Skriver ut antall duplikater og manglende verdier til konsollen.
