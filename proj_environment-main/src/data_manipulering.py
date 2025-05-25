@@ -24,10 +24,8 @@ class DataManipulering:
         Det bør også finnes en "value" kolonne for at funksjonen skal kunne sette verdien til None.
 
         Returnerer:
-        En tuple med det oppdaterte DataFrame-objektet og ingen annen returverdi.
-
-        Sideeffekter:
-        Skriver ut hvilken rad og hvilket år som ble valgt for fjerning, eller beskjed 
+        En tuple med det oppdaterte DataFrame-objektet og ingen annen returverdi, og
+        skriver ut hvilken rad og hvilket år som ble valgt for fjerning, eller beskjed 
         dersom ingen rader fantes for det valgte året.
         """
 
@@ -65,16 +63,12 @@ class DataManipulering:
         self (objekt): 
         Instansen av klassen denne metoden tilhører.
         df (pandas.DataFrame): 
-        Datasett som må inneholde en 'referenceTime'-kolonne i et datoformat som kan konverteres.
+        Datasett som må inneholde en "referenceTime" kolonne i et datoformat som kan konverteres.
 
         Returnerer:
-        En oppdatert DataFrame med én ekstra duplikat-rad, dersom det fantes data for det valgte året. 
-        Ellers returneres datasettet uendret.
-
-        Sideeffekter:
-        Skriver ut hvilket år som ble valgt for duplisering.
-        Informerer om totalt antall rader etter at duplikatet er lagt til.
-        Gir beskjed dersom det ikke finnes rader for det valgte året.
+        En oppdatert DataFrame med en ekstra duplikat-rad, dersom det fantes data for det valgte året. 
+        Ellers returneres datasettet uendret. Om en rad blir duplisert skrives det også ut hvilket år som ble valgt for duplisering, samt
+        informerer om totalt antall rader etter at duplikatet er lagt til, og gir beskjed dersom det ikke finnes rader for det valgte året.
         """
 
         # Konverterer "referenceTime" til datetime-format for å sikre korrekt behandling av datoer videre i koden
