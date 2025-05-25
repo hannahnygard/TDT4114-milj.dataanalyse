@@ -79,9 +79,10 @@ class Visualisering():
         plt.figure(figsize=(10, 6))
         ax = sns.barplot(data=df_statistikk, x='Tiår', y='Gjennomsnitt', hue='Tiår', palette='Blues', dodge=False)
 
-        # Feilstolper (standardavvik)
-        for i, row in df_statistikk.iterrows():
-            ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5)
+    # Feilstolper (standardavvik)
+    for i, row in df_statistikk.iterrows():
+        label = "Standardavvik" if i == 0 else None
+        ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5, label=label)
 
         # Medianlinje
         median_all_years = df_statistikk['Median'].median()
