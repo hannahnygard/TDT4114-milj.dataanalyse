@@ -77,7 +77,8 @@ def visualiser_statistikk_per_tiår(gjennomsnitt, median, standardavvik, tittel=
 
     # Feilstolper (standardavvik)
     for i, row in df_statistikk.iterrows():
-        ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5)
+        label = "Standardavvik" if i == 0 else None
+        ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5, label=label)
 
     # Medianlinje
     median_all_years = df_statistikk['Median'].median()
