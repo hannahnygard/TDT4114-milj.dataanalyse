@@ -79,18 +79,18 @@ class Visualisering():
         plt.figure(figsize=(10, 6))
         ax = sns.barplot(data=df_statistikk, x='Tiår', y='Gjennomsnitt', hue='Tiår', palette='Blues', dodge=False)
 
-    # Feilstolper (standardavvik) implementeres i diagrammet
-    for i, row in df_statistikk.iterrows():
-        label = "Standardavvik" if i == 0 else None
-        ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5, label=label)
-
+        # Feilstolper (standardavvik) implementeres i diagrammet
+        for i, row in df_statistikk.iterrows():
+            label = "Standardavvik" if i == 0 else None
+            ax.errorbar(x=i, y=row['Gjennomsnitt'], yerr=row['Standardavvik'], fmt='none', c='black', capsize=5, label=label)
+    
         # Medianlinje
         median_all_years = df_statistikk['Median'].median()
         plt.axhline(median_all_years, color='red', linestyle='--', label=f"Median (alle tiår): {median_all_years:.2f}")
-
+    
         # Median per tiår som kryss
         ax.scatter(df_statistikk.index, df_statistikk['Median'], color='red', zorder=5, label="Median per tiår", s=100, marker='X')
-
+    
         # Etiketter og tittel
         plt.xlabel('Tiår')
         plt.ylabel(ylabel)
