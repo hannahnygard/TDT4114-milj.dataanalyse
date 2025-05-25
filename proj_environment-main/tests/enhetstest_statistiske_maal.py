@@ -63,6 +63,16 @@ class Test_Statistiske_maal(unittest.TestCase):
         self.assertEqual(result["Totalt"], round(sum(range(1, 42)) / 41, 2))
 
 
+    def test_ugyldige_gjennomsnitt(self):
+        # tester om funksjonen hånterer ugyldige verdier på riktig måte
+        df = pd.DataFrame({
+        "year": [1980, 1981, 1982],
+        "value": ["en", "to", "tre"] 
+    })
+        with self.assertRaises((TypeError, ValueError)):
+            self.sm.gjennomsnitt(df)
+
+
     def test_median(self):
         
         result = self.sm.median(self.df)
@@ -74,6 +84,15 @@ class Test_Statistiske_maal(unittest.TestCase):
         self.assertEqual(round(result["2010-2020"], 2), 36.0)
         self.assertEqual(round(result["Totalt"], 2), 21.0)
 
+    def test_ugyldig_median(self):
+        # tester om funksjonen er i stand til å håndtere ugyldige år
+        df = pd.DataFrame({
+        "year": ["a","b", "c"],
+        "value": [30, 1, 24]
+    })
+
+        with self.assertRaises((TypeError, ValueError)):
+            self.sm.median(df)
 
     def test_standardavvik(self):
         result = self.sm.standardavvik(self.df)
@@ -85,6 +104,15 @@ class Test_Statistiske_maal(unittest.TestCase):
         self.assertEqual(round(result["2010-2020"], 2), round(self.df[(self.df["year"] >= 2010) & (self.df["year"] <= 2020)]["value"].std(), 2))
         self.assertEqual(round(result["Totalt"], 2), round(self.df[(self.df["year"] >= 1980) & (self.df["year"] <= 2020)]["value"].std(), 2))
 
+    def ugyldig_standardavvik(self):
+        # tester om funksjonen er i stand til å håndtere ugyldige verdier 
+        df = pd.DataFrame({
+        "year": [2000, 2001, 2002],
+        "value": ["lav", "middels", "høy"]
+    })
+
+        with self.assertRaises((TypeError, ValueError)):
+            self.sm.standardavvik(df)
 
     def test_tom_dataframe(self): 
         # sjekker hvordan håndteringen av et tomt datasett blir
