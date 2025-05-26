@@ -8,20 +8,54 @@ from statistiske_maal import Statistiske_maal
 
 class Test_Statistiske_maal(unittest.TestCase):
 
-    def setUp(self):             #funksjonen kjører før hver test og setter opp testdata
+    def setUp(self):            #funksjonen kjører før hver test og setter opp testdata
+        """
+        Forbereder testmiljøet før hver enkelt testmetode kjøres.
+
+        Fremgangsmåte:
+        - Oppretter en pandas DataFrame med "year", som er en liste over årene fra 1980 til og med 2020.
+          er "value" har tilhørende verdier fra 1 til 41.
+        - Initialiserer et objekt av klassen "Statistiske_maal" og lagrer det som "self.sm".
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Formål:
+        Sikrer at hver test starter med en fersk og identisk datastruktur, slik at testene blir isolerte og repeterbare.
+        """
+
+        # Lager testdata som dekker hele perioden 1980–2020 for å teste statistiske beregninger over tid
         data = {
-            "year": list(range(1980, 2021)),
-            "value": list(range(1, 42))  # 1980–2020 = 41 år
+            "year": list(range(1980, 2021)), # 41 år for å sikre full dekning av alle intervaller
+            "value": list(range(1, 42))  # Verdier som øker jevnt for å gjøre resultatene forutsigbare
         }
-        
+        # Konverterer testdataen til en DataFrame slik at den kan brukes i statistiske analyser
         self.df = pd.DataFrame(data)
+
+        # Initialiserer klassen som inneholder metodene vi ønsker å teste
         self.sm = Statistiske_maal()
     
     def test_gjennomsnitt(self):     
+        """
+        Tester funksjonen "gjennomsnitt" i klassen Statistiske_maal.
+
+        Fremgangsmåte:
+        - Kaller "gjennomsnitt" funksjonen med testdata "self.df" fra "setUp".
+        - Sammenligner returverdiene for hvert tiår med manuelt beregnede forventede gjennomsnittsverdier.
+        - Bruker "round" for å sikre konsistent avrunding med funksjonens resultat.
+
+        Parametere:
+        self (objekt):
+        Instansen av klassen denne metoden tilhører.
+
+        Formål:
+        Sikrer at funksjonen korrekt beregner gjennomsnittet av verdier per tiår og totalt for hele perioden 1980-2020.
+        """
         result = self.sm.gjennomsnitt(self.df)
 
-        # sammenligner resultatene fra funksjonen med de forventede verdiene
-        #verdiene for 1980-1989 er 1-10, deler dette på 10 og sammenligner med resultatene fra gjennomsnittsfunksjonen
+        # Funksjonen skal beregne gjennomsnitt for hvert tiår basert på "value" kolonnen.
+        # Vi bruker kjente verdier slik at resultatene enkelt kan bekreftes manuelt.
         self.assertEqual(result["1980-1989"], round(sum(range(1, 11)) / 10, 2))  
         self.assertEqual(result["1990-1999"], round(sum(range(11, 21)) / 10, 2))
         self.assertEqual(result["2000-2009"], round(sum(range(21, 31)) / 10, 2))
